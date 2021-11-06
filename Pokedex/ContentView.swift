@@ -8,9 +8,22 @@
 import SwiftUI
 
 struct ContentView: View {
+    var pokemonModel = PokemonModel()
+    @State private var pokemon = [Pokemon]()
+     
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        NavigationView{
+            List(pokemon){
+                poke in Text(poke.name)
+            }
+            .navigationTitle("Pokemon")
+        }
+        
+        .onAppear{
+            async {
+                pokemon = try! await pokemonModel.getPokemon()
+            }
+        }
     }
 }
 
