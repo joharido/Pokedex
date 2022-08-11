@@ -12,35 +12,46 @@ struct ContentView: View {
     
     @State private var defaultPokemon = [Pokemon]()
     @State private var pokemon = [Pokemon]()
-    
-    @State var sortOrder: SortingOrder = .family
-    
     var body: some View {
         NavigationView{
-            List(pokemon){ poke in
-                PokemonView(poke: poke)
-            }
-            .navigationBarTitle("Pokemon")
-            .onChange(of: sortOrder){ newOrder in
-                switch newOrder{
-                case .alphabetical:
-                    pokemon = defaultPokemon.sorted{$0.name < $1.name}
-                case .family:
-                    pokemon = defaultPokemon
+            List(pokemon.sorted { $0.name < $1.name }){ poke in
+                HStack {
+                    VStack (alignment: .leading, spacing: 5){
+                        Text(poke.name.capitalized).font(.title)
+                        Text(poke.type)
+                        //                        Text(poke)
+                        Text(poke.description)
+                    }
+                    AsyncImage(url: URL(string: poke.imgURL)){
+                        phase in switch phase{
+                        case .empty:
+                            ProgressView()
+                        case .success(let image):
+                            image.resizable()
+                                .interpolation(.none)
+                                .scaledToFit()
+                                .frame(width: 100, height: 100)
+                        case .failure:
+                            Image(systemName: "photo")
+                        @unknown default:
+                            EmptyView()
+                        }
+                    }
+                    
                 }
-                
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    SortView(currentDropdownState: $sortOrder)
+            }.navigationBarTitle("Pokemon")
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        SortView()
+                    }
                 }
-            }
         }
-        .onAppear {
-            Task {
-                defaultPokemon = try! await pokemonModel.getPokemon()
-                pokemon = defaultPokemon
+        
+        .onAppear{
+            Task{
+                pokemon = try! await pokemonModel.getPokemon()
             }
+            
         }
     }
 }
