@@ -10,13 +10,14 @@ import SwiftUI
 
 
 struct SortView: View{
-    @Binding var currentDropdownState: SortingOrder
-    
+    @State private var dropDownOrder = "Family"
+    var sortItems = ["Family", "Alphabetically"]
     var body: some View {
         Menu {
-            Picker("", selection: $currentDropdownState){
-                ForEach(SortingOrder.allCases) { order in
-                    Text(order.rawValue.capitalized)
+            
+            Picker("", selection: $dropDownOrder){
+                ForEach(sortItems, id: \.self) {
+                    Text($0).tag(true)
                 }
             }
             
@@ -29,6 +30,6 @@ struct SortView: View{
 
 struct SortView_Previews: PreviewProvider {
     static var previews: some View {
-        SortView(currentDropdownState: .constant(.family))
+        SortView()
     }
 }
