@@ -12,14 +12,16 @@ struct ContentView: View {
     
     @State private var defaultPokemon = [Pokemon]()
     @State private var pokemon = [Pokemon]()
+    
+    @State var sortOrder: SortingOrder = .family
+    
     var body: some View {
         NavigationView{
-            List(pokemon.sorted { $0.name < $1.name }){ poke in
+            List(pokemon){ poke in
                 HStack {
                     VStack (alignment: .leading, spacing: 5){
                         Text(poke.name.capitalized).font(.title)
                         Text(poke.type)
-                        //                        Text(poke)
                         Text(poke.description)
                     }
                     AsyncImage(url: URL(string: poke.imgURL)){
@@ -37,21 +39,29 @@ struct ContentView: View {
                             EmptyView()
                         }
                     }
-                    
                 }
-            }.navigationBarTitle("Pokemon")
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        SortView()
-                    }
-                }
-        }
-        
-        .onAppear{
-            Task{
-                pokemon = try! await pokemonModel.getPokemon()
             }
-            
+            .navigationBarTitle("Pokemon")
+            .onChange(of: sortOrder){ newOrder in
+                switch newOrder{
+                case .alphabetical:
+                    pokemon = defaultPokemon.sorted{$0.name < $1.name}
+                case .family:
+                    pokemon = defaultPokemon
+                }
+                
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    SortView(currentDropdownState: $sortOrder)
+                }
+            }
+        }
+        .onAppear {
+            Task {
+                defaultPokemon = try! await pokemonModel.getPokemon()
+                pokemon = defaultPokemon
+            }
         }
     }
 }
