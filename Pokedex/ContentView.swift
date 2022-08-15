@@ -18,28 +18,7 @@ struct ContentView: View {
     var body: some View {
         NavigationView{
             List(pokemon){ poke in
-                HStack {
-                    VStack (alignment: .leading, spacing: 5){
-                        Text(poke.name.capitalized).font(.title)
-                        Text(poke.type)
-                        Text(poke.description)
-                    }
-                    AsyncImage(url: URL(string: poke.imgURL)){
-                        phase in switch phase{
-                        case .empty:
-                            ProgressView()
-                        case .success(let image):
-                            image.resizable()
-                                .interpolation(.none)
-                                .scaledToFit()
-                                .frame(width: 100, height: 100)
-                        case .failure:
-                            Image(systemName: "photo")
-                        @unknown default:
-                            EmptyView()
-                        }
-                    }
-                }
+                PokemonView(poke: poke)
             }
             .navigationBarTitle("Pokemon")
             .onChange(of: sortOrder){ newOrder in
