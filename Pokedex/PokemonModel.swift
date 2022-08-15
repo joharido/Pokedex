@@ -16,6 +16,32 @@ struct Pokemon: Identifiable, Decodable{
     let type: String
     let description: String
     
+    var typeColor: Color{
+        switch type{
+        case "fire":
+            return Color(.systemRed)
+        case "poison":
+            return Color(.systemPurple)
+        case "water":
+            return Color(.systemTeal)
+        case "grass":
+            return Color(.systemGreen)
+        case "electric":
+            return Color(.systemYellow)
+        case "psychic":
+            return Color(.systemPink)
+        case "normal":
+            return Color(.systemGray)
+        case "ground":
+            return Color(.systemBrown)
+        case "flying":
+            return Color(.systemBlue)
+        default:
+            return Color(.systemGray6)
+        }
+        
+    }
+    
     enum CodingKeys: String, CodingKey {
         case id
         case name
@@ -55,7 +81,7 @@ extension Data {
     func removeNulls(string: String) -> Data?{
         let dataAsString = String(data: self, encoding: .utf8)
         let parsedDataString = dataAsString?.replacingOccurrences(of: string, with: "")
-//        let parsedDataString = dataAsString?.replacingOccurrences(of: <#T##String#>, with: "")
+        //        let parsedDataString = dataAsString?.replacingOccurrences(of: <#T##String#>, with: "")
         guard let data = parsedDataString?.data(using: .utf8) else {return nil}
         return data
     }
