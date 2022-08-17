@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct Pokemon: Identifiable, Decodable{
+struct Pokemon: Identifiable, Decodable, Hashable{
     let pokeID = UUID()
     
     let id: Int
